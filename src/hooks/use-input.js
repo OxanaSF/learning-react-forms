@@ -13,12 +13,11 @@ const useInput = (validateValue) => {
 
   const inputBlurHandler = (event) => {
     setIsTouched(true)
-
   }
 
   const reset = () => {
       setEnteredValue('')
-      setIsTouched(false)
+      setIsTouched(false) 
   }
 
   return {

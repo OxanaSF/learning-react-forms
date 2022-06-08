@@ -1,12 +1,12 @@
 import useInput from "../hooks/use-input";
-
+import Input from "./Input";
 
 const BasicForm = (props) => {
-  const isNotEmpty = value =>  value.trim() !== ''
+  const isNotEmpty = (value) => (value ? value.trim() !== "" : "");
+  console.log(isNotEmpty(""));
 
   const regEx = /[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,8}(.[a-z{2,8}])?/g;
-  const isEmail = value => regEx.test(value)
-
+  const isEmail = (value) => regEx.test(value);
 
   const {
     value: firstNameValue,
@@ -15,7 +15,8 @@ const BasicForm = (props) => {
     valueChangeHandler: firstNameChangeHandler,
     inputBlurHandler: firstNameBlurHandler,
     reset: resetFirstName,
-  } = useInput(isNotEmpty)
+  } = useInput(isNotEmpty);
+  console.log(useInput(isNotEmpty));
 
   const {
     value: lastNameValue,
@@ -24,7 +25,7 @@ const BasicForm = (props) => {
     valueChangeHandler: lastNameChangeHandler,
     inputBlurHandler: lastNameBlurHandler,
     reset: resetLastName,
-  } = useInput(isNotEmpty)
+  } = useInput(isNotEmpty);
 
   const {
     value: emailValue,
@@ -33,72 +34,92 @@ const BasicForm = (props) => {
     valueChangeHandler: emailChangeHandler,
     inputBlurHandler: emailBlurHandler,
     reset: resetEmail,
-  } = useInput(isEmail)
+  } = useInput(isEmail);
 
-  let formIsValid = false
+  let formIsValid = false;
 
-  if (firstNameIsValid && lastNameIsValid && emailIsValid) {
-    formIsValid = true
+  if (lastNameIsValid && emailIsValid) {
+    formIsValid = true;
   }
 
   const submitHandler = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     if (!formIsValid) {
-      return
+      return;
     }
 
-    console.log('Sumbitted!')
-    console.log(firstNameValue, lastNameValue, emailValue)
+    console.log("Sumbitted!");
+    console.log(firstNameValue, lastNameValue, emailValue);
 
-    resetFirstName()
-    resetLastName()
-    resetEmail()
-  }
+    resetFirstName();
+    resetLastName();
+    resetEmail();
+  };
 
+  const firstNameClasses = firstNameHasError
+    ? "form-control invalid"
+    : "form-control";
+  const lastNameClasses = lastNameHasError
+    ? "form-control invalid"
+    : "form-control";
+  const emailClasses = emailHasError ? "form-control invalid" : "form-control";
 
-  const firstNameClasses = firstNameHasError ? 'form-control invalid' : 'form-control'
-  const lastNameClasses = lastNameHasError ? 'form-control invalid' : 'form-control'
-  const emailClasses = emailHasError ? 'form-control invalid' : 'form-control'
-
+  const inputData = [
+    {
+      className: firstNameClasses,
+      id: "fname",
+      type: "text",
+      value: firstNameValue,
+      content: "First Name",
+      onChange: firstNameChangeHandler,
+      onBlur: firstNameBlurHandler,
+      hasError: firstNameHasError,
+      par: "Please enter a first name.",
+    },
+    {
+      className: lastNameClasses,
+      id: "lname",
+      type: "text",
+      value: lastNameValue,
+      content: "Last Name",
+      onChange: lastNameChangeHandler,
+      onBlur: lastNameBlurHandler,
+      hasError: lastNameHasError,
+      par: "Please enter a last name.",
+    },
+    {
+      className: emailClasses,
+      id: "email",
+      type: "text",
+      value: emailValue,
+      content: "E-Mail Address",
+      onChange: emailChangeHandler,
+      onBlur: emailBlurHandler,
+      hasError: emailHasError,
+      par: "Please enter an email address.",
+    },
+  ];
 
   return (
     <form onSubmit={submitHandler}>
-      <div className='control-group'>
-        <div className={firstNameClasses}>
-          <label htmlFor='name'>First Name</label>
-          <input 
-                type='text' 
-                id='name'
-                value={firstNameValue} 
-                onChange={firstNameChangeHandler}
-                onBlur={firstNameBlurHandler}
-                />
-          {firstNameHasError && <p className="error-text">Please enter a first name.</p> } 
-        </div>
-        <div className={lastNameClasses}>
-          <label htmlFor='name'>Last Name</label>
-          <input 
-                type='text' 
-                id='name' 
-                value={lastNameValue} 
-                onChange={lastNameChangeHandler}
-                onBlur={lastNameBlurHandler}
-                />
-          { lastNameHasError && <p className="error-text">Please enter a last name.</p> } 
-        </div>
+      <div className="control-group">
+        {inputData.map((inputEl) => (
+          <Input
+            key={inputEl.id}
+            className={inputEl.className}
+            id={inputEl.id}
+            type={inputEl.type}
+            value={inputEl.value}
+            content={inputEl.content}
+            onChange={inputEl.onChange}
+            onBlur={inputEl.onBlur}
+            hasError={inputEl.hasError}
+            par={inputEl.par}
+          />
+        ))}
       </div>
-      <div className={emailClasses}>
-        <label htmlFor='name'>E-Mail Address</label>
-        <input 
-                type='text' 
-                id='name' 
-                value={emailValue} 
-                onChange={emailChangeHandler}
-                onBlur={emailBlurHandler}
-                />
-        { emailHasError && <p className="error-text">Please enter an email address.</p> } 
-      </div>
-      <div className='form-actions'>
+
+      <div className="form-actions">
         <button disabled={!formIsValid}>Submit</button>
       </div>
     </form>
